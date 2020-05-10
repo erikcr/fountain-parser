@@ -1,0 +1,25 @@
+{
+  "name": "fountain.ts",
+  "version": "0.0.1",
+  "description": "Typescript based Fountain format screenplay parser.",
+  "main": "src/index.js",
+  "scripts": {
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "yarn run compile",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run check"
+  },
+  "devDependencies": {
+    "@types/node": "^10.0.3",
+    "gts": "^2.0.0",
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3"
+  },
+  "prettier": {},
+  "dependencies": {
+    "fs": "^0.0.1-security"
+  }
+}
