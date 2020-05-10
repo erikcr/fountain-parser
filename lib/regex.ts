@@ -2,6 +2,15 @@
  * Regex definitions
  */
 export const TITLE_PAGE = /^((?:title|credit|author[s]?|source|notes|draft date|date|contact|copyright):)/gim;
+export const AUTHOR = /^(?:author[s]?):?/gim;
+export const CONTACT = /^(?:contact):?/gim;
+export const COPYRIGHT = /^(?:copyright):?/gim;
+export const CREDIT = /^(?:credit):?/gim;
+export const DATE = /^(?:date):?/gim;
+export const DRAFT_DATE = /^(?:draft date):?/gim;
+export const NOTES = /^(?:notes):?/gim;
+export const SOURCE = /^(?:source):?/gim;
+export const TITLE = /^(?:title):?/gim;
 
 export const SCENE_HEADING = /^((?:\*{0,3}_?)?(?:(?:int|ext|est|i\/e)[. ]).+)|^(?:\.(?!\.+))(.+)/i;
 export const SCENE_NUMBER = /( *#(.+)# *)/;
