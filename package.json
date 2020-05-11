@@ -2,12 +2,20 @@
   "name": "travi",
   "version": "0.0.1",
   "description": "Typescript based Fountain file parser.",
+  "author": "Erik C. Rutledge",
+  "license": "MIT",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erikcr/trevi"
+  },
+  "prettier": {},
   "scripts": {
-    "compile": "tsc",
-    "prepare": "yarn run compile",
-    "pretest": "yarn run compile",
-    "posttest": "yarn run check"
+    "build": "tsc",
+    "prepare": "yarn run build",
+    "pretest": "yarn run build",
+    "posttest": "yarn run build"
   },
   "devDependencies": {
     "@types/node": "^10.0.3",
@@ -16,7 +24,6 @@
     "tslint": "^6.1.1",
     "typescript": "^3.8.3"
   },
-  "prettier": {},
   "dependencies": {
     "uuid": "^8.0.0"
   }

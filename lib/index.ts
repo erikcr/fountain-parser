@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import * as regex from "./regex";
-import { IFountainFile, IBlock, IScene } from "./types";
+import { IFountainFile, IBlock, IScene } from "./index.d";
 
-export class Trevi implements IFountainFile {
+export default class Trevi implements IFountainFile {
   input = "";
   authors = "";
   contact = "";
