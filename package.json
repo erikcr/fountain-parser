@@ -1,13 +1,10 @@
 {
-  "name": "fountain.ts",
+  "name": "travi",
   "version": "0.0.1",
-  "description": "Typescript based Fountain format screenplay parser.",
-  "main": "src/index.js",
+  "description": "Typescript based Fountain file parser.",
+  "main": "dist/index.js",
   "scripts": {
-    "check": "gts check",
-    "clean": "gts clean",
     "compile": "tsc",
-    "fix": "gts fix",
     "prepare": "yarn run compile",
     "pretest": "yarn run compile",
     "posttest": "yarn run check"
@@ -21,7 +18,6 @@
   },
   "prettier": {},
   "dependencies": {
-    "fs": "^0.0.1-security",
     "uuid": "^8.0.0"
   }
 }
