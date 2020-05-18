@@ -1,6 +1,6 @@
 {
   "name": "trevi",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Typescript based Fountain file parser.",
   "author": "Erik C. Rutledge",
   "license": "MIT",
