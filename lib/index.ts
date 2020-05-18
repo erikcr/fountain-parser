@@ -5,7 +5,6 @@ import fs from "fs";
 import path from "path";
 
 export default class Trevi implements IFountainFile {
-  input = "";
   authors = "";
   contact = "";
   copyright = "";
@@ -21,7 +20,7 @@ export default class Trevi implements IFountainFile {
     this.tokenize(input);
   }
 
-  lexer(input: string) {
+  private lexer(input: string) {
     return input
       .replace(regex.BONEYARD, "\n$1\n")
       .replace(regex.STANDARDIZER, "\n")
@@ -30,29 +29,45 @@ export default class Trevi implements IFountainFile {
   }
 
   /**
-   * @TODO Correct Regex to detect character with ()
-   * @param none
+   * Returns an array of names from the script.
+   * @returns The unique character names within the script.
+   * @param includeDirectives 
    */
-  // getCharacters = () => {
-  //   let match,
-  //     characters: string[] = [];
+  getCharacters = (includeDirectives: boolean = false) => {
+    let match,
+      blocks,
+      name,
+      characters: string[] = [];
 
-  //   return this.scenes.forEach((scene) => {
-  //     return scene.blocks.map((block) => {
-  //       if (block.type === "CHARACTER") {
-  //         match = block.text?.match(regex.CHARACTER);
-  //         console.log(match);
-  //         return match;
-  //       }
-  //     });
-  //   });
-  // };
+    for (let i = 0; i < this.scenes.length; i++) {
+      blocks = this.scenes[i].blocks;
+      for (let j = 0; j < blocks.length; j++) {
+        if (blocks[j].type === "CHARACTER") {
+          match = blocks[j].text?.match(regex.CHARACTER);
+
+          if (!match) continue
+
+          if (includeDirectives) {
+            name = match[0].trim();
+          } else {
+            name = match[1].trim();
+          }
+
+          if (!characters.includes(name)) {
+            characters.push(name);
+          }
+        }
+      }
+    }
+
+    return characters;
+  };
 
   /**
    * tokenize()
    * @param input Full text string of Fountain file
    */
-  tokenize(input: string) {
+  private tokenize(input: string) {
     const src = this.lexer(input).split(regex.SPLITTER);
 
     let i = src.length;
