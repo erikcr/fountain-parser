@@ -8,17 +8,16 @@ export interface IFountainFile {
   notes: string;
   source: string;
   title: string;
-  blocks: Array<IBlock>;
   scenes: Array<IScene>;
-}
-
-export interface IBlock {
-  id: string;
-  type: string;
-  text?: string;
 }
 
 export interface IScene {
   number: number;
-  blockIds: Array<string>;
+  slugline: string;
+  blocks: Array<IBlock>;
+}
+
+export interface IBlock {
+  type: string;
+  text?: string;
 }

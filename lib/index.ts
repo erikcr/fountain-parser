@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import * as regex from "./regex";
 import { IFountainFile, IBlock, IScene } from "./index.d";
+import fs from "fs";
+import path from "path";
 
 export default class Trevi implements IFountainFile {
   input = "";
@@ -13,7 +15,6 @@ export default class Trevi implements IFountainFile {
   notes = "";
   source = "";
   title = "";
-  blocks: Array<IBlock> = [];
   scenes: Array<IScene> = [];
 
   constructor(input: string) {
@@ -28,12 +29,35 @@ export default class Trevi implements IFountainFile {
       .replace(regex.WHITESPACER, "");
   }
 
+  /**
+   * @TODO Correct Regex to detect character with ()
+   * @param none
+   */
+  // getCharacters = () => {
+  //   let match,
+  //     characters: string[] = [];
+
+  //   return this.scenes.forEach((scene) => {
+  //     return scene.blocks.map((block) => {
+  //       if (block.type === "CHARACTER") {
+  //         match = block.text?.match(regex.CHARACTER);
+  //         console.log(match);
+  //         return match;
+  //       }
+  //     });
+  //   });
+  // };
+
+  /**
+   * tokenize()
+   * @param input Full text string of Fountain file
+   */
   tokenize(input: string) {
     const src = this.lexer(input).split(regex.SPLITTER);
 
     let i = src.length;
-    let id, line, match, text, parts, dual, name;
-    let blockIds: Array<string> = [];
+    let line, match, text, parts, dual, name;
+    let blocks: Array<IBlock> = [];
 
     while (i--) {
       line = src[i];
@@ -76,22 +100,15 @@ export default class Trevi implements IFountainFile {
 
       // Slugline
       if ((match = line.match(regex.SLUGLINE))) {
-        id = uuidv4();
-        blockIds.push(id);
         text = match[1] || match[2];
 
-        this.blocks.push({
-          id,
-          type: "SLUGLINE",
-          text,
-        });
-
-        blockIds.reverse();
+        blocks.reverse();
         this.scenes.push({
           number: -1,
-          blockIds,
+          slugline: text,
+          blocks,
         });
-        blockIds = [];
+        blocks = [];
 
         continue;
       }
@@ -102,8 +119,6 @@ export default class Trevi implements IFountainFile {
           parts = match[3].split(/(\(.+\))(?:\n+)/).reverse();
 
           for (let x = 0; x < parts.length; x++) {
-            id = uuidv4();
-            blockIds.push(id);
             text = parts[x];
 
             if (text.length > 0) {
@@ -115,17 +130,14 @@ export default class Trevi implements IFountainFile {
                 type += match[2] ? "_RIGHT" : dual ? "_LEFT" : "";
               }
 
-              this.blocks.push({
-                id,
+              blocks.push({
                 type,
                 text,
               });
             }
           }
 
-          id = uuidv4();
-          blockIds.push(id);
-          this.blocks.push({ id, type: "CHARACTER", text: match[1].trim() });
+          blocks.push({ type: "CHARACTER", text: match[1].trim() });
 
           dual = match[2];
           continue;
@@ -134,64 +146,49 @@ export default class Trevi implements IFountainFile {
 
       // Action
       if (regex.ACTION) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({ id, type: "ACTION", text: line });
+        blocks.push({ type: "ACTION", text: line });
 
         continue;
       }
 
       // Centered
       if ((match = line.match(regex.CENTERED))) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({ id, type: "CENTERED", text: match[0] });
+        blocks.push({ type: "CENTERED", text: match[0] });
 
         continue;
       }
 
       // Transition
       if ((match = line.match(regex.TRANSITION))) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({ id, type: "TRANSITION", text: match[0] });
+        blocks.push({ type: "TRANSITION", text: match[0] });
 
         continue;
       }
 
       // Section
       if ((match = line.match(regex.SECTION))) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({ id, type: "SECTION", text: match[2] });
+        blocks.push({ type: "SECTION", text: match[2] });
 
         continue;
       }
 
       // Synopsis
       if ((match = line.match(regex.SYNOPSIS))) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({ id, type: "SYNOPSIS", text: match[1] });
+        blocks.push({ type: "SYNOPSIS", text: match[1] });
 
         continue;
       }
 
       // Note
       if ((match = line.match(regex.NOTE))) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({ id, type: "NOTE", text: match[1] });
+        blocks.push({ type: "NOTE", text: match[1] });
 
         continue;
       }
 
       // Boneyard
       if ((match = line.match(regex.BONEYARD))) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({
-          id,
+        blocks.push({
           type: match[0][0] === "/" ? "BONEYARD_BEGIN" : "BONEYARD_END",
         });
 
@@ -200,24 +197,19 @@ export default class Trevi implements IFountainFile {
 
       // Page Break
       if (regex.PAGE_BREAK.test(line)) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({ id, type: "PAGE_BREAK" });
+        blocks.push({ type: "PAGE_BREAK" });
 
         continue;
       }
 
       // Line Break
       if (regex.LINE_BREAK.test(line)) {
-        id = uuidv4();
-        blockIds.push(id);
-        this.blocks.push({ id, type: "LINE_BREAK" });
+        blocks.push({ type: "LINE_BREAK" });
 
         continue;
       }
     }
 
-    this.blocks.reverse();
     this.scenes.reverse();
 
     for (let x = 0; x < this.scenes.length; x++) {
